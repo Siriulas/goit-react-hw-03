@@ -1,0 +1,25 @@
+.listItem {
+  border: 2px solid #353535;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  width: 320px;
+  justify-content: space-between;
+  padding: 12px;
+}
+.info {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background-color: #919191;
+  transition: background-color 0.3s ease;
+}
+.button:hover,
+.button:focus {
+  background-color: #353535;
+}

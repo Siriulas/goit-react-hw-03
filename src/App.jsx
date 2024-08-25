@@ -1,42 +1,47 @@
-import { useEffect, useState } from 'react'
-import './App.module.css'
-import Description from './components/Description/Description'
-import Feedback from './components/Feedback/Feedback'
-import Options from './components/Options/Options'
-import Notification from './components/Notification/Notification'
+import ContactForm from "./components/ContactForm/ContactForm";
+import SearchBox from "./components/SearchBox/SearchBox";
+import ContactList from "./components/ContactList/ContactList";
+import PhoneBook from "./components/Data/PhoneBook.json"
+import { useState, useEffect } from "react";
+import css from "./App.module.css"
 
 const getInitialData = () => {
-  const savedData = window.localStorage.getItem('my-data');
-  return savedData !== null ? JSON.parse(savedData) : { good: 0, neutral: 0, bad: 0 };
+  const savedData = localStorage.getItem('users-data');
+  return savedData ? JSON.parse(savedData) : PhoneBook;
 }
 
+
 export default function App() {
-  const [data, setData] = useState(getInitialData)
-
+  
+  const [users, setUsers] = useState(getInitialData)
+  const [filter, setFilter] = useState('')
+  
   useEffect(()=> {
-    window.localStorage.setItem('my-data', JSON.stringify(data));
-  }, [data])
+  const phoneBook = JSON.stringify(users);
+    localStorage.setItem("users-data", phoneBook);
+  }, [users]);
 
-  const resetFeedback =() => {
-    setData({good: 0, neutral: 0, bad: 0})
+  const addUser = (newUser) => {
+    setUsers((prevUsers) => {
+      return [...prevUsers, newUser];
+    });
+  };
+  const deleteUser = (userId) => {
+    setUsers((prevUsers) => {
+      return prevUsers.filter((user) => user.id !== userId)
+    }) 
   }
-  const updateFeedback = feedbackType => {
-    setData({...data, [feedbackType]: data[feedbackType] + 1})
-  }
-  const totalFeedback = data.good + data.neutral + data.bad;
-  const positivePercentage = totalFeedback > 0 ? Math.round((data.good / totalFeedback) * 100) : 0;
-    
 
-
-   return (
-    <>
-      <Description />
-      <Options updateFeedback={updateFeedback} reset={resetFeedback} total={totalFeedback} />
-      {totalFeedback > 0 ? (
-        <Feedback good={data.good} neutral={data.neutral} bad={data.bad} total={totalFeedback} percent={positivePercentage} />
-      ) : (
-        <Notification total={totalFeedback} />
-      )}
-    </>
-  );
+    const visibleUsers = users.filter((user) => user.name.toLowerCase().includes(filter.toLowerCase()));
+  
+  return (
+    <div id={css.root}>
+      <h1>
+        PhoneBook
+      </h1>
+      <ContactForm onAdd={addUser}></ContactForm>
+    <SearchBox value={filter} onFilter={setFilter}></SearchBox>
+      <ContactList contactsList={visibleUsers} onDelete={deleteUser}></ContactList>
+    </div>
+  )
 }
