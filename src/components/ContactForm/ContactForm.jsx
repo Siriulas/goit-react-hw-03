@@ -15,11 +15,11 @@ const UserSchema = yup.object().shape({
 });
 
 export default function ContactForm({ onAdd }) {
-    const nameId = useId();
+    const userID = Date.now();
 
     const handleSubmit = (values, { resetForm }) => {
         onAdd({
-            id: {nameId},
+            id: userID,
             name: values.name,
             number: values.number,
         });
